@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Birthday Celebrations</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <header class="site-header container">
+    <h1>Bengalis Everywhere</h1>
+  </header>
+
+  <main>
+    <section id="birthday-display" class="container">
+      <h2>Discover Birthdays</h2>
+      <div class="birthday-cards-container">
+        <div class="birthday-card highlighted">
+          <div>
+            <h3 class="person-name">Alex Doe</h3>
+            <p class="birth-date">Born on: October 26</p>
+            <p>Wishes them a fantastic day filled with joy and laughter!</p>
+          </div>
+          <a href="#" class="button social-link">Wish Happy Birthday</a>
+        </div>
+        <div class="birthday-card">
+          <div>
+            <h3 class="person-name">Jamie Smith</h3>
+            <p class="birth-date">Born on: March 15</p>
+            <p>Hope they have an amazing year ahead!</p>
+          </div>
+          <a href="#" class="button social-link">Wish Happy Birthday</a>
+        </div>
+        <div class="birthday-card">
+          <div>
+            <h3 class="person-name">Casey Lee</h3>
+            <p class="birth-date">Born on: December 03</p>
+            <p>Sending best wishes for a wonderful celebration.</p>
+          </div>
+          <a href="#" class="button social-link">Wish Happy Birthday</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="actions-section" class="container">
+      <button id="show-another-btn" class="button secondary">Show Another Random Birthday</button>
+    </section>
+
+    <section id="submission-form-section" class="container">
+      <h2>Add Your Birthday</h2>
+      <form id="birthdaySubmissionForm" method="POST">
+        <div class="form-group">
+          <label for="name">Your Name:</label>
+          <input type="text" id="name" name="name" placeholder="e.g., Pat Jones" required />
+        </div>
+
+        <div class="form-group">
+          <label for="birthday">Your Birthday:</label>
+          <input type="date" id="birthday" name="birthday" required />
+        </div>
+
+        <div class="form-group">
+          <label for="social-link">Social Media Profile Link (Optional):</label>
+          <input type="url" id="social-link" name="social_link" placeholder="e.g., https://twitter.com/yourprofile" />
+        </div>
+
+        <p class="tooltip-info">
+          By submitting, your birthday and (optionally) your social link may be displayed for others to see and send wishes.
+        </p>
+
+        <button type="submit" class="button">Submit My Birthday</button>
+        <p id="form-status-message" style="margin-top: 10px; text-align: center;"></p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2023 Birthday Celebrations. Design Preview.</p>
+  </footer>
+
+  <script>
+    const birthdayForm = document.getElementById('birthdaySubmissionForm');
+    const formStatusMessage = document.getElementById('form-status-message');
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwMbGOcDfmj-1zgurWv_ZvSPhhU6q6p6p2XQF6M3TrwW_2s56fcjWv2LP_zcRyhmw9USw/exec';
+
+    birthdayForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const submitButton = birthdayForm.querySelector('button[type="submit"]');
+      submitButton.disabled = true;
+      submitButton.textContent = 'Submitting...';
+      formStatusMessage.textContent = '';
+
+      const formData = new FormData(birthdayForm);
+
+      try {
+        const response = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          body: formData
+        });
+
+        const result = await response.json();
+
+        if (result.status === 'success') {
+          formStatusMessage.textContent = result.message || 'Successfully submitted!';
+          formStatusMessage.style.color = '#03dac6'; 
+          birthdayForm.reset();
+        } else {
+          formStatusMessage.textContent = 'Error: ' + (result.message || 'Submission failed.');
+          formStatusMessage.style.color = '#cf6679'; 
+        }
+      } catch (error) {
+        console.error('Submission error:', error);
+        formStatusMessage.textContent = 'An unexpected error occurred. Please try again.';
+        formStatusMessage.style.color = '#cf6679';
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Submit My Birthday';
+      }
+    });
+
+    <!-- ... Inside your existing <script> tag or in your linked JS file ... -->
+            
+    
+            const SCRIPT_URL_GET = SCRIPT_URL; 
+            const birthdayCardsContainer = document.querySelector('.birthday-cards-container');
+            const showAnotherBtn = document.getElementById('show-another-btn');
+            let allBirthdays = [];
+            let displayedBirthdays = new Set(); 
+    
+            
+            function formatBirthDate(dateString) {
+    if (!dateString || String(dateString).trim() === "") { 
+        return "N/A";
+    }
+
+    const date = new Date(dateString);
+    date.setDate(date.getDate() + 1); 
+
+    return date.toLocaleDateString('en-US', {
+        month: 'long',
+        day: 'numeric'
+    });
+}
+
+
+
+    
+            
+            function isBirthdayToday(dateString) {
+    if (!dateString || String(dateString).trim() === "") {
+        return false;
+    }
+
+    const birthDate = new Date(dateString);
+    birthDate.setDate(birthDate.getDate() + 1); // 👈 Add one day
+
+    const today = new Date();
+    return birthDate.getDate() === today.getDate() &&
+           birthDate.getMonth() === today.getMonth();
+}
+
+    
+            
+            function createBirthdayCardHTML(person) {
+                const isToday = isBirthdayToday(person.Birthday);
+                const cardClass = isToday ? 'birthday-card highlighted' : 'birthday-card';
+                
+                let socialLinkHTML = ''; 
+
+                
+                if (isToday && person.SocialLink) {
+                    socialLinkHTML = `<a href="${person.SocialLink}" target="_blank" rel="noopener noreferrer" class="button social-link">Wish Happy Birthday</a>`;
+                }
+                
+
+                return `
+                    <div class="${cardClass}" data-name="${person.Name}">
+                        <div>
+                            <h3 class="person-name">${person.Name || 'N/A'}</h3>
+                            <p class="birth-date">Born on: ${formatBirthDate(person.Birthday)}</p>
+                            <p>${isToday ? "It's their birthday today! 🎉" : "Wishes them a great day when it comes!"}</p>
+                        </div>
+                        ${socialLinkHTML} 
+                    </div>
+                `;
+            }
+    
+            
+            function displayRandomBirthdays(birthdays, count = 3) {
+                if (!birthdayCardsContainer) {
+                    console.error("Birthday cards container not found!");
+                    return;
+                }
+                birthdayCardsContainer.innerHTML = ''; 
+                displayedBirthdays.clear(); 
+    
+                if (!birthdays || birthdays.length === 0) {
+                    birthdayCardsContainer.innerHTML = '<p>No birthdays to show yet. Be the first to add yours!</p>';
+                    return;
+                }
+    
+                let availableBirthdays = [...birthdays];
+                let cardsHTML = '';
+                const numToDisplay = Math.min(count, availableBirthdays.length);
+    
+                for (let i = 0; i < numToDisplay; i++) {
+                    if (availableBirthdays.length === 0) break; 
+    
+                    const randomIndex = Math.floor(Math.random() * availableBirthdays.length);
+                    const person = availableBirthdays.splice(randomIndex, 1)[0]; 
+                    cardsHTML += createBirthdayCardHTML(person);
+                    displayedBirthdays.add(person.Name); 
+                }
+                birthdayCardsContainer.innerHTML = cardsHTML;
+            }
+    
+            
+            function showAnother() {
+                if (allBirthdays.length === 0) return;
+    
+                
+                let unseenBirthdays = allBirthdays.filter(p => !displayedBirthdays.has(p.Name));
+    
+                if (unseenBirthdays.length === 0) { 
+                    displayedBirthdays.clear();
+                    unseenBirthdays = allBirthdays;
+                }
+                
+                
+                displayRandomBirthdays(allBirthdays, 3);
+            }
+    
+            
+            async function fetchAllBirthdays() {
+                if (!birthdayCardsContainer) return; 
+    
+                
+                birthdayCardsContainer.innerHTML = '<p style="text-align:center;">Loading birthdays...</p>';
+    
+                try {
+                    const response = await fetch(SCRIPT_URL_GET); 
+                    const result = await response.json();
+    
+                    if (result.status === 'success' && result.data) {
+                        allBirthdays = result.data.filter(item => item.Name && item.Birthday); 
+                        if (allBirthdays.length > 0) {
+                            displayRandomBirthdays(allBirthdays, 3); 
+                        } else {
+                            birthdayCardsContainer.innerHTML = '<p>No birthdays found in the sheet, or data is incomplete.</p>';
+                        }
+                    } else {
+                        console.error('Failed to fetch birthdays:', result.message);
+                        birthdayCardsContainer.innerHTML = `<p>Error loading birthdays: ${result.message || 'Unknown error'}</p>`;
+                    }
+                } catch (error) {
+                    console.error('Error fetching birthdays:', error);
+                    birthdayCardsContainer.innerHTML = `<p>Could not connect to fetch birthdays. Error: ${error.message}</p>`;
+                }
+            }
+    
+           
+            if (showAnotherBtn) {
+                showAnotherBtn.addEventListener('click', showAnother);
+            }
+    
+            
+            document.addEventListener('DOMContentLoaded', () => {
+                fetchAllBirthdays(); // Fetch and display birthdays when the page loads
+            });
+    
+  </script>
+</body>
+</html>
