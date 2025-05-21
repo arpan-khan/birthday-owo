@@ -70,7 +70,7 @@ It was a collaborative and learning-focused process that shows how human creativ
 
 ## 📬 Want to Try It?
 
-**Visit the site here**: [https://your-bday-site-url.com](https://arpan-khan.github.io/birthday-owo/)  
+**Visit the site here**: [Click Here](https://arpan-khan.github.io/birthday-owo/)  
 _Submit your birthday and start celebrating others!_
 
 ---
