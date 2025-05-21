@@ -16,7 +16,7 @@
     <section id="birthday-display" class="container">
       <h2>Discover Birthdays</h2>
       <div class="birthday-cards-container">
-        <!-- Placeholder content, will be replaced by JS -->
+        
         <div class="birthday-card highlighted">
           <div>
             <h3 class="person-name">Alex Doe</h3>
@@ -61,7 +61,7 @@
           <input type="date" id="birthday" name="birthday" required />
         </div>
 
-        <!-- START: Modified Social Media Section -->
+        
         <div class="form-group">
             <label for="social-platform">Social Media Platform (Optional):</label>
             <select id="social-platform" name="social_platform_selector">
@@ -90,7 +90,7 @@
             <label for="social-link-input">Full Social Media Link:</label>
             <input type="url" id="social-link-input" name="social_link" placeholder="e.g., https://yourprofile.com/username" />
         </div>
-        <!-- END: Modified Social Media Section -->
+        
 
         <p class="tooltip-info">
           By submitting, your birthday and (optionally) your social link may be displayed for others to see and send wishes.
@@ -111,7 +111,7 @@
     const formStatusMessage = document.getElementById('form-status-message');
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwMbGOcDfmj-1zgurWv_ZvSPhhU6q6p6p2XQF6M3TrwW_2s56fcjWv2LP_zcRyhmw9USw/exec';
 
-    // --- START: Added Social Media Elements and Base URLs ---
+    
     const socialPlatformSelect = document.getElementById('social-platform');
     const socialIdGroup = document.getElementById('social-id-group');
     const socialIdInput = document.getElementById('social-id');
@@ -156,7 +156,7 @@
             }
         });
     }
-    // --- END: Added Social Media Elements and Event Listener ---
+    
 
 
     birthdayForm.addEventListener('submit', async (e) => {
@@ -167,7 +167,7 @@
       submitButton.textContent = 'Submitting...';
       formStatusMessage.textContent = '';
 
-      // --- START: Modified logic to prepare social_link value ---
+      
       if (socialPlatformSelect) { 
           const selectedPlatform = socialPlatformSelect.value;
           
@@ -182,12 +182,12 @@
                   socialLinkInput.value = ''; 
               }
           } else if (selectedPlatform === "other") {
-              // Value is already in socialLinkInput from user typing
+              
           } else {
-              socialLinkInput.value = ''; // No platform, so no link
+              socialLinkInput.value = ''; 
           }
       }
-      // --- END: Modified logic to prepare social_link value ---
+      
 
       const formData = new FormData(birthdayForm);
 
@@ -203,7 +203,7 @@
           formStatusMessage.textContent = result.message || 'Successfully submitted!';
           formStatusMessage.style.color = '#03dac6'; 
           birthdayForm.reset();
-          // Also reset social media fields visibility
+          
           if (socialPlatformSelect) socialPlatformSelect.value = "";
           if (socialIdGroup) socialIdGroup.style.display = 'none';
           if (socialLinkInputGroup) socialLinkInputGroup.style.display = 'none';
@@ -231,15 +231,15 @@
     let displayedBirthdays = new Set(); 
     
 
-                // Helper function to shuffle an array (Fisher-Yates shuffle)
+                
             function shuffleArray(array) {
                 let currentIndex = array.length, randomIndex;
-                // While there remain elements to shuffle.
+                
                 while (currentIndex !== 0) {
-                    // Pick a remaining element.
+                    
                     randomIndex = Math.floor(Math.random() * currentIndex);
                     currentIndex--;
-                    // And swap it with the current element.
+                    
                     [array[currentIndex], array[randomIndex]] = [
                         array[randomIndex], array[currentIndex]];
                 }
@@ -312,14 +312,14 @@
                 let cardsHTML = '';
                 let displayedCount = 0;
 
-                // Separate birthdays into "today" and "others"
+                
                 const todayBirthdays = birthdays.filter(person => isBirthdayToday(person.Birthday));
                 const otherBirthdays = birthdays.filter(person => !isBirthdayToday(person.Birthday));
 
-                // Shuffle the "other" birthdays for random selection later
+                
                 const shuffledOtherBirthdays = shuffleArray([...otherBirthdays]); // Use a copy for shuffling
 
-                // Prioritize today's birthdays
+                
                 for (const person of todayBirthdays) {
                     if (displayedCount >= count) break;
                     cardsHTML += createBirthdayCardHTML(person);
@@ -327,12 +327,11 @@
                     displayedCount++;
                 }
 
-                // Fill remaining slots with other birthdays
+                
                 if (displayedCount < count) {
                     for (const person of shuffledOtherBirthdays) {
                         if (displayedCount >= count) break;
-                        // Ensure we don't re-add someone if somehow they were in both lists
-                        // (though unlikely with current filtering) or if names aren't unique
+                        
                         if (!displayedBirthdays.has(person.Name)) { 
                             cardsHTML += createBirthdayCardHTML(person);
                             displayedBirthdays.add(person.Name);
@@ -341,7 +340,7 @@
                     }
                 }
                 
-                if (cardsHTML === '') { // Should only happen if birthdays array was non-empty but filtering led to no displayable items
+                if (cardsHTML === '') { 
                      birthdayCardsContainer.innerHTML = '<p>No matching birthdays to display at the moment.</p>';
                 } else {
                     birthdayCardsContainer.innerHTML = cardsHTML;
