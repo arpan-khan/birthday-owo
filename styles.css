@@ -190,25 +190,52 @@
         color: #c0c0c0;
     }
 
-    .form-group input[type="text"],
-    .form-group input[type="date"],
-    .form-group input[type="url"] {
-        width: 100%;
-        padding: 12px;
-        background-color: #2c2c2c;
-        border: 1px solid #444;
-        border-radius: 5px;
-        color: #e0e0e0;
-        font-size: 1rem;
-    }
+    /* MODIFIED RULE */
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group input[type="url"],
+.form-group select { /* ADDED select here */
+    width: 100%;
+    padding: 12px; /* Base padding */
+    background-color: #2c2c2c;
+    border: 1px solid #444;
+    border-radius: 5px;
+    color: #e0e0e0;
+    font-size: 1rem;
+    font-family: inherit; /* Ensures select uses the body's font */
+    line-height: 1.6; /* Ensures consistent vertical alignment with text */
+}
 
-    .form-group input[type="text"]:focus,
-    .form-group input[type="date"]:focus,
-    .form-group input[type="url"]:focus {
-        outline: none;
-        border-color: #bb86fc;
-        box-shadow: 0 0 0 2px rgba(187, 134, 252, 0.3);
-    }
+/* NEW RULES FOR SELECT STYLING */
+.form-group select {
+    appearance: none; /* Remove default system appearance */
+    -webkit-appearance: none; /* For Safari/Chrome */
+    -moz-appearance: none;    /* For Firefox */
+
+    /* Custom arrow using an inline SVG. The fill color %23e0e0e0 matches your light text color. */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23e0e0e0'%3E%3Cpath d='M8 11.043l-4.518-4.518.707-.707L8 9.628l3.811-3.81.707.707L8 11.043z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center; /* Position arrow from the right edge */
+    background-size: 1em; /* Size of the arrow icon */
+    padding-right: 40px; /* Increase right padding to make space for the arrow (12px default + arrow + gap) */
+}
+
+/* Styling for the dropdown options (limited styling possible here) */
+.form-group select option {
+    background-color: #2c2c2c; /* Background of the options popup */
+    color: #e0e0e0;           /* Text color of options */
+    /* Note: Some browsers might not fully respect all styles on options */
+}
+
+    /* MODIFIED RULE */
+.form-group input[type="text"]:focus,
+.form-group input[type="date"]:focus,
+.form-group input[type="url"]:focus,
+.form-group select:focus { /* ADDED select:focus here */
+    outline: none;
+    border-color: #bb86fc;
+    box-shadow: 0 0 0 2px rgba(187, 134, 252, 0.3);
+}
 
     .tooltip-info {
         font-size: 0.9rem;

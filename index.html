@@ -3,19 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Birthday Celebrations</title>
+  <title>B-day OwO</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
   <header class="site-header container">
-    <h1>Bengalis Everywhere</h1>
+    <h1>B-DAY OWO</h1>
   </header>
 
   <main>
     <section id="birthday-display" class="container">
       <h2>Discover Birthdays</h2>
       <div class="birthday-cards-container">
+        <!-- Placeholder content, will be replaced by JS -->
         <div class="birthday-card highlighted">
           <div>
             <h3 class="person-name">Alex Doe</h3>
@@ -52,7 +53,7 @@
       <form id="birthdaySubmissionForm" method="POST">
         <div class="form-group">
           <label for="name">Your Name:</label>
-          <input type="text" id="name" name="name" placeholder="e.g., Pat Jones" required />
+          <input type="text" id="name" name="name" placeholder="e.g., Onee Chan" required />
         </div>
 
         <div class="form-group">
@@ -60,10 +61,36 @@
           <input type="date" id="birthday" name="birthday" required />
         </div>
 
+        <!-- START: Modified Social Media Section -->
         <div class="form-group">
-          <label for="social-link">Social Media Profile Link (Optional):</label>
-          <input type="url" id="social-link" name="social_link" placeholder="e.g., https://twitter.com/yourprofile" />
+            <label for="social-platform">Social Media Platform (Optional):</label>
+            <select id="social-platform" name="social_platform_selector">
+                <option value="">-- Select Platform --</option>
+                <option value="instagram">Instagram</option>
+                <option value="tiktok">TikTok</option>
+                <option value="facebook">Facebook</option>
+                <option value="twitter">X (Twitter)</option>
+                <option value="youtube">YouTube</option>
+                <option value="snapchat">Snapchat</option>
+                <option value="threads">Threads</option>
+                <option value="linkedin">LinkedIn</option>
+                <option value="pinterest">Pinterest</option>
+                <option value="reddit">Reddit</option>
+                <option value="github">GitHub</option>
+                <option value="other">Other (Enter full link)</option>
+            </select>
         </div>
+
+        <div class="form-group" id="social-id-group" style="display: none;">
+            <label for="social-id">Your Username/ID on Platform:</label>
+            <input type="text" id="social-id" placeholder="e.g., onee_chan" />
+        </div>
+
+        <div class="form-group" id="social-link-input-group" style="display: none;">
+            <label for="social-link-input">Full Social Media Link:</label>
+            <input type="url" id="social-link-input" name="social_link" placeholder="e.g., https://yourprofile.com/username" />
+        </div>
+        <!-- END: Modified Social Media Section -->
 
         <p class="tooltip-info">
           By submitting, your birthday and (optionally) your social link may be displayed for others to see and send wishes.
@@ -76,13 +103,61 @@
   </main>
 
   <footer class="site-footer">
-    <p>&copy; 2023 Birthday Celebrations. Design Preview.</p>
+    <p>© 2025 B-DAY OWO. Arpan Khan.</p>
   </footer>
 
   <script>
     const birthdayForm = document.getElementById('birthdaySubmissionForm');
     const formStatusMessage = document.getElementById('form-status-message');
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwMbGOcDfmj-1zgurWv_ZvSPhhU6q6p6p2XQF6M3TrwW_2s56fcjWv2LP_zcRyhmw9USw/exec';
+
+    // --- START: Added Social Media Elements and Base URLs ---
+    const socialPlatformSelect = document.getElementById('social-platform');
+    const socialIdGroup = document.getElementById('social-id-group');
+    const socialIdInput = document.getElementById('social-id');
+    const socialLinkInputGroup = document.getElementById('social-link-input-group');
+    const socialLinkInput = document.getElementById('social-link-input');
+
+    const socialPlatformBaseUrls = {
+        instagram: "https://www.instagram.com/",
+        tiktok: "https://www.tiktok.com/@",
+        facebook: "https://www.facebook.com/",
+        twitter: "https://twitter.com/",
+        youtube: "https://www.youtube.com/@",
+        snapchat: "https://www.snapchat.com/add/",
+        threads: "https://www.threads.net/@",
+        linkedin: "https://www.linkedin.com/in/",
+        pinterest: "https://www.pinterest.com/",
+        reddit: "https://www.reddit.com/user/",
+        github: "https://github.com/"
+    };
+
+    if (socialPlatformSelect) {
+        socialPlatformSelect.addEventListener('change', function() {
+            const selectedPlatform = this.value;
+            socialIdInput.value = '';
+            socialLinkInput.value = '';
+
+            if (selectedPlatform === "other") {
+                socialIdGroup.style.display = 'none';
+                socialLinkInputGroup.style.display = 'block';
+                socialLinkInput.required = true; 
+                socialIdInput.required = false;
+            } else if (selectedPlatform) {
+                socialIdGroup.style.display = 'block';
+                socialLinkInputGroup.style.display = 'none';
+                socialIdInput.required = true;
+                socialLinkInput.required = false; 
+            } else {
+                socialIdGroup.style.display = 'none';
+                socialLinkInputGroup.style.display = 'none';
+                socialIdInput.required = false;
+                socialLinkInput.required = false;
+            }
+        });
+    }
+    // --- END: Added Social Media Elements and Event Listener ---
+
 
     birthdayForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -91,6 +166,28 @@
       submitButton.disabled = true;
       submitButton.textContent = 'Submitting...';
       formStatusMessage.textContent = '';
+
+      // --- START: Modified logic to prepare social_link value ---
+      if (socialPlatformSelect) { 
+          const selectedPlatform = socialPlatformSelect.value;
+          
+          if (selectedPlatform && selectedPlatform !== "other") {
+              const userId = socialIdInput.value.trim();
+              if (userId && socialPlatformBaseUrls[selectedPlatform]) {
+                  socialLinkInput.value = socialPlatformBaseUrls[selectedPlatform] + userId;
+              } else if (userId) { 
+                  socialLinkInput.value = userId; 
+                  console.warn("Platform selected, ID entered, but no base URL found. Using ID as full link.");
+              } else {
+                  socialLinkInput.value = ''; 
+              }
+          } else if (selectedPlatform === "other") {
+              // Value is already in socialLinkInput from user typing
+          } else {
+              socialLinkInput.value = ''; // No platform, so no link
+          }
+      }
+      // --- END: Modified logic to prepare social_link value ---
 
       const formData = new FormData(birthdayForm);
 
@@ -106,6 +203,13 @@
           formStatusMessage.textContent = result.message || 'Successfully submitted!';
           formStatusMessage.style.color = '#03dac6'; 
           birthdayForm.reset();
+          // Also reset social media fields visibility
+          if (socialPlatformSelect) socialPlatformSelect.value = "";
+          if (socialIdGroup) socialIdGroup.style.display = 'none';
+          if (socialLinkInputGroup) socialLinkInputGroup.style.display = 'none';
+          if (socialIdInput) socialIdInput.value = '';
+          if (socialLinkInput) socialLinkInput.value = '';
+
         } else {
           formStatusMessage.textContent = 'Error: ' + (result.message || 'Submission failed.');
           formStatusMessage.style.color = '#cf6679'; 
@@ -119,75 +223,79 @@
         submitButton.textContent = 'Submit My Birthday';
       }
     });
-
-    <!-- ... Inside your existing <script> tag or in your linked JS file ... -->
             
+    const SCRIPT_URL_GET = SCRIPT_URL; 
+    const birthdayCardsContainer = document.querySelector('.birthday-cards-container');
+    const showAnotherBtn = document.getElementById('show-another-btn');
+    let allBirthdays = [];
+    let displayedBirthdays = new Set(); 
     
-            const SCRIPT_URL_GET = SCRIPT_URL; 
-            const birthdayCardsContainer = document.querySelector('.birthday-cards-container');
-            const showAnotherBtn = document.getElementById('show-another-btn');
-            let allBirthdays = [];
-            let displayedBirthdays = new Set(); 
-    
-            
-            function formatBirthDate(dateString) {
-    if (!dateString || String(dateString).trim() === "") { 
-        return "N/A";
-    }
 
-    const date = new Date(dateString);
-    date.setDate(date.getDate() + 1); 
-
-    return date.toLocaleDateString('en-US', {
-        month: 'long',
-        day: 'numeric'
-    });
-}
-
-
-
-    
-            
-            function isBirthdayToday(dateString) {
-    if (!dateString || String(dateString).trim() === "") {
-        return false;
-    }
-
-    const birthDate = new Date(dateString);
-    birthDate.setDate(birthDate.getDate() + 1); // 👈 Add one day
-
-    const today = new Date();
-    return birthDate.getDate() === today.getDate() &&
-           birthDate.getMonth() === today.getMonth();
-}
-
-    
-            
-            function createBirthdayCardHTML(person) {
-                const isToday = isBirthdayToday(person.Birthday);
-                const cardClass = isToday ? 'birthday-card highlighted' : 'birthday-card';
-                
-                let socialLinkHTML = ''; 
-
-                
-                if (isToday && person.SocialLink) {
-                    socialLinkHTML = `<a href="${person.SocialLink}" target="_blank" rel="noopener noreferrer" class="button social-link">Wish Happy Birthday</a>`;
+                // Helper function to shuffle an array (Fisher-Yates shuffle)
+            function shuffleArray(array) {
+                let currentIndex = array.length, randomIndex;
+                // While there remain elements to shuffle.
+                while (currentIndex !== 0) {
+                    // Pick a remaining element.
+                    randomIndex = Math.floor(Math.random() * currentIndex);
+                    currentIndex--;
+                    // And swap it with the current element.
+                    [array[currentIndex], array[randomIndex]] = [
+                        array[randomIndex], array[currentIndex]];
                 }
-                
-
-                return `
-                    <div class="${cardClass}" data-name="${person.Name}">
-                        <div>
-                            <h3 class="person-name">${person.Name || 'N/A'}</h3>
-                            <p class="birth-date">Born on: ${formatBirthDate(person.Birthday)}</p>
-                            <p>${isToday ? "It's their birthday today! 🎉" : "Wishes them a great day when it comes!"}</p>
-                        </div>
-                        ${socialLinkHTML} 
-                    </div>
-                `;
+                return array;
             }
-    
+
+
+    function formatBirthDate(dateString) {
+        if (!dateString || String(dateString).trim() === "") { 
+            return "N/A";
+        }
+
+        const date = new Date(dateString);
+        date.setDate(date.getDate() + 1); 
+
+        return date.toLocaleDateString('en-US', {
+            month: 'long',
+            day: 'numeric'
+        });
+    }
             
+    function isBirthdayToday(dateString) {
+        if (!dateString || String(dateString).trim() === "") {
+            return false;
+        }
+
+        const birthDate = new Date(dateString);
+        birthDate.setDate(birthDate.getDate() + 1); 
+
+        const today = new Date();
+        return birthDate.getDate() === today.getDate() &&
+               birthDate.getMonth() === today.getMonth();
+    }
+            
+    function createBirthdayCardHTML(person) {
+        const isToday = isBirthdayToday(person.Birthday);
+        const cardClass = isToday ? 'birthday-card highlighted' : 'birthday-card';
+        
+        let socialLinkHTML = ''; 
+        
+        if (isToday && person.SocialLink) {
+            socialLinkHTML = `<a href="${person.SocialLink}" target="_blank" rel="noopener noreferrer" class="button social-link">Wish Happy Birthday</a>`;
+        }
+        
+        return `
+            <div class="${cardClass}" data-name="${person.Name}">
+                <div>
+                    <h3 class="person-name">${person.Name || 'N/A'}</h3>
+                    <p class="birth-date">Born on: ${formatBirthDate(person.Birthday)}</p>
+                    <p>${isToday ? "It's their birthday today! 🎉" : "Wish them a great day when it comes!"}</p>
+                </div>
+                ${socialLinkHTML} 
+            </div>
+        `;
+    }
+    
             function displayRandomBirthdays(birthdays, count = 3) {
                 if (!birthdayCardsContainer) {
                     console.error("Birthday cards container not found!");
@@ -200,75 +308,92 @@
                     birthdayCardsContainer.innerHTML = '<p>No birthdays to show yet. Be the first to add yours!</p>';
                     return;
                 }
-    
-                let availableBirthdays = [...birthdays];
+
                 let cardsHTML = '';
-                const numToDisplay = Math.min(count, availableBirthdays.length);
-    
-                for (let i = 0; i < numToDisplay; i++) {
-                    if (availableBirthdays.length === 0) break; 
-    
-                    const randomIndex = Math.floor(Math.random() * availableBirthdays.length);
-                    const person = availableBirthdays.splice(randomIndex, 1)[0]; 
+                let displayedCount = 0;
+
+                // Separate birthdays into "today" and "others"
+                const todayBirthdays = birthdays.filter(person => isBirthdayToday(person.Birthday));
+                const otherBirthdays = birthdays.filter(person => !isBirthdayToday(person.Birthday));
+
+                // Shuffle the "other" birthdays for random selection later
+                const shuffledOtherBirthdays = shuffleArray([...otherBirthdays]); // Use a copy for shuffling
+
+                // Prioritize today's birthdays
+                for (const person of todayBirthdays) {
+                    if (displayedCount >= count) break;
                     cardsHTML += createBirthdayCardHTML(person);
                     displayedBirthdays.add(person.Name); 
+                    displayedCount++;
                 }
-                birthdayCardsContainer.innerHTML = cardsHTML;
-            }
-    
-            
-            function showAnother() {
-                if (allBirthdays.length === 0) return;
-    
-                
-                let unseenBirthdays = allBirthdays.filter(p => !displayedBirthdays.has(p.Name));
-    
-                if (unseenBirthdays.length === 0) { 
-                    displayedBirthdays.clear();
-                    unseenBirthdays = allBirthdays;
-                }
-                
-                
-                displayRandomBirthdays(allBirthdays, 3);
-            }
-    
-            
-            async function fetchAllBirthdays() {
-                if (!birthdayCardsContainer) return; 
-    
-                
-                birthdayCardsContainer.innerHTML = '<p style="text-align:center;">Loading birthdays...</p>';
-    
-                try {
-                    const response = await fetch(SCRIPT_URL_GET); 
-                    const result = await response.json();
-    
-                    if (result.status === 'success' && result.data) {
-                        allBirthdays = result.data.filter(item => item.Name && item.Birthday); 
-                        if (allBirthdays.length > 0) {
-                            displayRandomBirthdays(allBirthdays, 3); 
-                        } else {
-                            birthdayCardsContainer.innerHTML = '<p>No birthdays found in the sheet, or data is incomplete.</p>';
+
+                // Fill remaining slots with other birthdays
+                if (displayedCount < count) {
+                    for (const person of shuffledOtherBirthdays) {
+                        if (displayedCount >= count) break;
+                        // Ensure we don't re-add someone if somehow they were in both lists
+                        // (though unlikely with current filtering) or if names aren't unique
+                        if (!displayedBirthdays.has(person.Name)) { 
+                            cardsHTML += createBirthdayCardHTML(person);
+                            displayedBirthdays.add(person.Name);
+                            displayedCount++;
                         }
-                    } else {
-                        console.error('Failed to fetch birthdays:', result.message);
-                        birthdayCardsContainer.innerHTML = `<p>Error loading birthdays: ${result.message || 'Unknown error'}</p>`;
                     }
-                } catch (error) {
-                    console.error('Error fetching birthdays:', error);
-                    birthdayCardsContainer.innerHTML = `<p>Could not connect to fetch birthdays. Error: ${error.message}</p>`;
+                }
+                
+                if (cardsHTML === '') { // Should only happen if birthdays array was non-empty but filtering led to no displayable items
+                     birthdayCardsContainer.innerHTML = '<p>No matching birthdays to display at the moment.</p>';
+                } else {
+                    birthdayCardsContainer.innerHTML = cardsHTML;
                 }
             }
     
-           
-            if (showAnotherBtn) {
-                showAnotherBtn.addEventListener('click', showAnother);
-            }
+    function showAnother() {
+        if (allBirthdays.length === 0) return;
+        
+        let unseenBirthdays = allBirthdays.filter(p => !displayedBirthdays.has(p.Name));
     
-            
-            document.addEventListener('DOMContentLoaded', () => {
-                fetchAllBirthdays(); // Fetch and display birthdays when the page loads
-            });
+        if (unseenBirthdays.length === 0) { 
+            displayedBirthdays.clear();
+            unseenBirthdays = allBirthdays;
+        }
+        
+        displayRandomBirthdays(allBirthdays, 3);
+    }
+    
+    async function fetchAllBirthdays() {
+        if (!birthdayCardsContainer) return; 
+        
+        birthdayCardsContainer.innerHTML = '<p style="text-align:center;">Loading birthdays...</p>';
+    
+        try {
+            const response = await fetch(SCRIPT_URL_GET); 
+            const result = await response.json();
+    
+            if (result.status === 'success' && result.data) {
+                allBirthdays = result.data.filter(item => item.Name && item.Birthday); 
+                if (allBirthdays.length > 0) {
+                    displayRandomBirthdays(allBirthdays, 3); 
+                } else {
+                    birthdayCardsContainer.innerHTML = '<p>No birthdays found in the sheet, or data is incomplete.</p>';
+                }
+            } else {
+                console.error('Failed to fetch birthdays:', result.message);
+                birthdayCardsContainer.innerHTML = `<p>Error loading birthdays: ${result.message || 'Unknown error'}</p>`;
+            }
+        } catch (error) {
+            console.error('Error fetching birthdays:', error);
+            birthdayCardsContainer.innerHTML = `<p>Could not connect to fetch birthdays. Error: ${error.message}</p>`;
+        }
+    }
+           
+    if (showAnotherBtn) {
+        showAnotherBtn.addEventListener('click', showAnother);
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchAllBirthdays(); 
+    });
     
   </script>
 </body>
